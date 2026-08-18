@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.org.apitest</groupId>
+    <artifactId>api-test-services</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>API Test Services &amp; Test Suites</name>
+
+    <modules>
+        <module>service-sdks/order-service-sdk</module>
+        <module>test-suites/order-service-tests</module>
+        <module>test-suites/e2e-workflow-tests</module>
+    </modules>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <api-test-core.version>1.0.0-SNAPSHOT</api-test-core.version>
+        <testng.version>7.10.2</testng.version>
+        <allure.version>2.29.1</allure.version>
+        <assertj.version>3.27.3</assertj.version>
+        <awaitility.version>4.2.2</awaitility.version>
+        <env>qa</env>
+        <groups></groups>
+        <parallel.threads>4</parallel.threads>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.org.apitest</groupId>
+                <artifactId>api-test-core</artifactId>
+                <version>${api-test-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testng</groupId>
+                <artifactId>testng</artifactId>
+                <version>${testng.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-testng</artifactId>
+                <version>${allure.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.awaitility</groupId>
+                <artifactId>awaitility</artifactId>
+                <version>${awaitility.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <configuration>
+                        <suiteXmlFiles>
+                            <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                        </suiteXmlFiles>
+                        <systemPropertyVariables>
+                            <env>${env}</env>
+                            <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        </systemPropertyVariables>
+                        <groups>${groups}</groups>
+                        <parallel>methods</parallel>
+                        <threadCount>${parallel.threads}</threadCount>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>io.qameta.allure</groupId>
+                    <artifactId>allure-maven</artifactId>
+                    <version>2.14.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>smoke</id>
+            <properties>
+                <groups>smoke</groups>
+            </properties>
+        </profile>
+        <profile>
+            <id>regression</id>
+            <properties>
+                <groups>regression</groups>
+            </properties>
+        </profile>
+        <profile>
+            <id>e2e</id>
+            <properties>
+                <groups>e2e</groups>
+            </properties>
+        </profile>
+    </profiles>
+</project>

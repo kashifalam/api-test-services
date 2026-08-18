@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Order Service Suite" parallel="methods" thread-count="4" verbose="1">
+    <listeners>
+        <listener class-name="com.org.apitest.base.listeners.ConfigListener"/>
+        <listener class-name="com.org.apitest.base.listeners.TraceIdListener"/>
+        <listener class-name="com.org.apitest.base.listeners.CleanupListener"/>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+    <test name="Order Service Tests">
+        <packages>
+            <package name="com.org.apitest.order"/>
+        </packages>
+    </test>
+</suite>
