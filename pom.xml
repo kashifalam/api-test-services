@@ -12,6 +12,7 @@
 
     <modules>
         <module>service-sdks/order-service-sdk</module>
+        <module>service-sdks/payment-service-sdk</module>
         <module>test-suites/order-service-tests</module>
         <module>test-suites/e2e-workflow-tests</module>
     </modules>
@@ -25,8 +26,9 @@
         <allure.version>2.29.1</allure.version>
         <assertj.version>3.27.3</assertj.version>
         <awaitility.version>4.2.2</awaitility.version>
+        <checkstyle.version>10.21.4</checkstyle.version>
+        <spotless.version>2.43.0</spotless.version>
         <env>qa</env>
-        <groups></groups>
         <parallel.threads>4</parallel.threads>
     </properties>
 
@@ -61,6 +63,76 @@
     </dependencyManagement>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-java</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[21,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.9,)</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failOnViolation>true</failOnViolation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-validate</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <removeUnusedImports/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -80,7 +152,6 @@
                             <env>${env}</env>
                             <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                         </systemPropertyVariables>
-                        <groups>${groups}</groups>
                         <parallel>methods</parallel>
                         <threadCount>${parallel.threads}</threadCount>
                     </configuration>
@@ -98,20 +169,41 @@
         <profile>
             <id>smoke</id>
             <properties>
-                <groups>smoke</groups>
+                <testng.groups>smoke</testng.groups>
             </properties>
         </profile>
         <profile>
             <id>regression</id>
             <properties>
-                <groups>regression</groups>
+                <testng.groups>regression</testng.groups>
             </properties>
         </profile>
         <profile>
             <id>e2e</id>
             <properties>
-                <groups>e2e</groups>
+                <testng.groups>e2e</testng.groups>
             </properties>
+        </profile>
+        <profile>
+            <id>filtered</id>
+            <activation>
+                <property>
+                    <name>testng.groups</name>
+                </property>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <configuration>
+                                <groups>${testng.groups}</groups>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
     </profiles>
 </project>
