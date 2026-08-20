@@ -5,7 +5,7 @@ import com.org.apitest.data.CleanupRegistry;
 import com.org.apitest.order.builder.OrderPayloadBuilder;
 import com.org.apitest.order.model.OrderRequest;
 import io.restassured.response.Response;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +15,7 @@ public class CreateOrderTest extends BaseApiTest {
 
     private OrderClient orderClient;
 
-    @BeforeClass(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true)
     public void initClient() {
         orderClient = new OrderClient();
     }
@@ -37,7 +37,7 @@ public class CreateOrderTest extends BaseApiTest {
 
     @Test(groups = {"regression", "order-service"})
     public void shouldRejectOrderWithInvalidQuantity() {
-        OrderRequest payload = OrderPayloadBuilder.withProduct("PROD-001", -1);
+        OrderRequest payload = OrderPayloadBuilder.withProduct(OrderPayloadBuilder.DEFAULT_PRODUCT_ID, -1);
 
         orderClient.createOrder(payload).then().statusCode(400);
     }
