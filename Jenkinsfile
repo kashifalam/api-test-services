@@ -53,7 +53,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    def groupsArg = params.GROUPS?.trim() ? "-Dgroups=${params.GROUPS}" : ''
+                    def groupsArg = params.GROUPS?.trim() ? "-Pfiltered -Dtestng.groups=${params.GROUPS}" : ''
                     def modules = params.TEST_SUITE == 'all'
                         ? '-pl test-suites/order-service-tests,test-suites/e2e-workflow-tests -am'
                         : "-pl test-suites/${params.TEST_SUITE} -am"

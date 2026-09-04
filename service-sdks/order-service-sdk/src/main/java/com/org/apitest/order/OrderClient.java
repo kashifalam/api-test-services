@@ -1,19 +1,25 @@
 package com.org.apitest.order;
 
+import com.org.apitest.config.ServiceKey;
 import com.org.apitest.http.HttpClientFacade;
 import com.org.apitest.observability.AllureSteps;
 import com.org.apitest.order.model.OrderRequest;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
-import static org.hamcrest.Matchers.equalTo;
-
-public class OrderClient {
+/**
+ * REST client for the Order service API.
+ */
+public final class OrderClient {
 
     private final HttpClientFacade http;
 
     public OrderClient() {
-        this.http = HttpClientFacade.forService("order");
+        this(HttpClientFacade.forService(ServiceKey.ORDER));
+    }
+
+    OrderClient(HttpClientFacade http) {
+        this.http = http;
     }
 
     @Step("Create order for product {payload.productId}")
@@ -33,14 +39,5 @@ public class OrderClient {
     @Step("Cancel order: {orderId}")
     public Response cancelOrder(String orderId) {
         return http.delete("/orders/" + orderId);
-    }
-
-    public String createOrderAndExtractId(OrderRequest payload) {
-        return createOrder(payload)
-                .then()
-                .statusCode(201)
-                .body("status", equalTo("CREATED"))
-                .extract()
-                .path("id");
     }
 }

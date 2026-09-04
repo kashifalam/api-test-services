@@ -16,29 +16,38 @@ Consumer repository for service SDKs and executable TestNG test suites. Depends 
 
 ```
 api-test-services/
-├── service-sdks/order-service-sdk/   # Order & Payment API clients
-├── test-suites/order-service-tests/  # Service-level REST tests
-└── test-suites/e2e-workflow-tests/   # REST → JDBC → Redis E2E tests
+├── service-sdks/order-service-sdk/     # Order API client
+├── service-sdks/payment-service-sdk/   # Payment API client
+├── test-suites/order-service-tests/    # Service-level REST tests
+└── test-suites/e2e-workflow-tests/     # REST → JDBC → Redis E2E tests
 ```
+
+## Coding Standards
+
+```bash
+mvn validate          # Checkstyle + Spotless + Enforcer
+mvn spotless:apply    # Auto-fix formatting
+```
+
+SDK clients return raw HTTP responses; assertions belong in test classes.
 
 ## Run Tests Locally
 
+Copy `.env.example` and export required variables, then:
+
 ```bash
-# All modules compile
+# Compile all modules
 mvn clean compile
 
 # Order service smoke tests against QA
-mvn test -pl test-suites/order-service-tests -am -Denv=qa -Dgroups=smoke
+mvn test -pl test-suites/order-service-tests -am -Denv=qa -Psmoke
 
 # E2E regression
-mvn test -pl test-suites/e2e-workflow-tests -am -Denv=qa -Dgroups=e2e
+mvn test -pl test-suites/e2e-workflow-tests -am -Denv=qa -Pe2e
 ```
 
-## Environment Configuration
+## Required Environment Variables
 
-Environment YAML files live in each test module under `src/test/resources/environments/`. Secrets use `${ENV_VAR}` placeholders resolved at runtime.
-
-Required environment variables for QA:
 - `AUTH_CLIENT_ID`, `AUTH_CLIENT_SECRET`
 - `ORDER_DB_USER`, `ORDER_DB_PASSWORD`
 - `REDIS_PASSWORD` (if applicable)
