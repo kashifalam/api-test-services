@@ -1,11 +1,11 @@
 package com.org.apitest.order.model;
 
 /**
- * Order creation request payload.
+ * Order creation request payload. Matches the order-service {@code CreateOrderRequest} contract.
  */
 public record OrderRequest(
-        String customerEmail,
-        String productId,
+        String userId,
+        String item,
         int quantity,
-        String correlationId) {
+        double amount) {
 }

@@ -7,6 +7,8 @@ import com.org.apitest.order.model.OrderRequest;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
+import java.util.Map;
+
 /**
  * REST client for the Order service API.
  */
@@ -36,8 +38,15 @@ public final class OrderClient {
         return response;
     }
 
+    @Step("Update status of order {orderId} to {status}")
+    public Response updateStatus(String orderId, String status) {
+        Response response = http.put("/orders/" + orderId + "/status", Map.of("status", status));
+        AllureSteps.attachJson("update-order-status-response", response.asPrettyString());
+        return response;
+    }
+
     @Step("Cancel order: {orderId}")
     public Response cancelOrder(String orderId) {
-        return http.delete("/orders/" + orderId);
+        return updateStatus(orderId, "CANCELLED");
     }
 }

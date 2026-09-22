@@ -1,10 +1,10 @@
 package com.org.apitest.payment.model;
 
 /**
- * Payment submission request payload.
+ * Payment submission request payload. Matches the payment-service {@code CreatePaymentRequest} contract.
  */
 public record PaymentRequest(
-        String method,
+        String orderId,
         double amount,
-        String currency) {
+        String paymentMethod) {
 }
