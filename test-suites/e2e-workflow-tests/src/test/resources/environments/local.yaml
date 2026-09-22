@@ -1,0 +1,7 @@
+environment: local
+
+services:
+  order:
+    baseUrl: http://localhost:8081/api/v1
+  payment:
+    baseUrl: http://localhost:8082/api/v1
