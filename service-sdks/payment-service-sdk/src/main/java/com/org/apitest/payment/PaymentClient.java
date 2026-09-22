@@ -22,10 +22,24 @@ public final class PaymentClient {
         this.http = http;
     }
 
-    @Step("Submit payment for order: {orderId}")
-    public Response pay(String orderId, PaymentRequest paymentPayload) {
-        Response response = http.post("/payments/" + orderId, paymentPayload);
+    @Step("Submit payment for order: {payload.orderId}")
+    public Response pay(PaymentRequest payload) {
+        Response response = http.post("/payments", payload);
         AllureSteps.attachJson("payment-response", response.asPrettyString());
+        return response;
+    }
+
+    @Step("Get payment by id: {paymentId}")
+    public Response getPayment(String paymentId) {
+        Response response = http.get("/payments/" + paymentId);
+        AllureSteps.attachJson("get-payment-response", response.asPrettyString());
+        return response;
+    }
+
+    @Step("Get payments for order: {orderId}")
+    public Response getPaymentsForOrder(String orderId) {
+        Response response = http.get("/payments/order/" + orderId);
+        AllureSteps.attachJson("get-payments-by-order-response", response.asPrettyString());
         return response;
     }
 }

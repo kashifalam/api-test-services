@@ -27,7 +27,7 @@ public class CreateOrderTest extends BaseApiTest {
         Response response = orderClient.createOrder(payload);
         response.then().statusCode(201).body("status", equalTo("CREATED"));
 
-        String orderId = response.path("id");
+        String orderId = response.path("orderId");
         assertThat(orderId).isNotBlank();
 
         CleanupRegistry.register(() -> orderClient.cancelOrder(orderId));
@@ -37,7 +37,7 @@ public class CreateOrderTest extends BaseApiTest {
 
     @Test(groups = {"regression", "order-service"})
     public void shouldRejectOrderWithInvalidQuantity() {
-        OrderRequest payload = OrderPayloadBuilder.withProduct(OrderPayloadBuilder.DEFAULT_PRODUCT_ID, -1);
+        OrderRequest payload = OrderPayloadBuilder.withQuantity(-1);
 
         orderClient.createOrder(payload).then().statusCode(400);
     }

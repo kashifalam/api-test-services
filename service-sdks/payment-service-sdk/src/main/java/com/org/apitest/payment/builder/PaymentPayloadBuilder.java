@@ -7,14 +7,13 @@ import com.org.apitest.payment.model.PaymentRequest;
  */
 public final class PaymentPayloadBuilder {
 
-    public static final String DEFAULT_METHOD = "CARD";
-    public static final double DEFAULT_AMOUNT = 99.99;
-    public static final String DEFAULT_CURRENCY = "USD";
+    public static final String DEFAULT_PAYMENT_METHOD = "CREDIT_CARD";
+    public static final double DEFAULT_AMOUNT = 1299.99;
 
     private PaymentPayloadBuilder() {
     }
 
-    public static PaymentRequest validPayment() {
-        return new PaymentRequest(DEFAULT_METHOD, DEFAULT_AMOUNT, DEFAULT_CURRENCY);
+    public static PaymentRequest validPayment(String orderId) {
+        return new PaymentRequest(orderId, DEFAULT_AMOUNT, DEFAULT_PAYMENT_METHOD);
     }
 }
